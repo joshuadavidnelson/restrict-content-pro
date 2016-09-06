@@ -20,10 +20,37 @@ $role_set_display  = '' != $user_role ? '' : ' style="display:none;"';
 	</p>
 	<p>
 		<select id="rcp-restrict-by" name="rcp_restrict_by">
-			<option value="unrestricted" <?php selected( true, ( empty( $sub_levels ) && empty( $access_level ) && empty( $is_paid ) ) ); ?>><?php _e( 'Everyone', 'rcp' ); ?></option>
-			<option value="subscription-level"<?php selected( true, ! empty( $sub_levels ) || ! empty( $is_paid ) ); ?>><?php _e( 'Members of subscription level(s)', 'rcp' ); ?></option>
-			<option value="access-level"<?php selected( true, is_numeric( $access_level ) ); ?>><?php _e( 'Members with an access level', 'rcp' ); ?></option>
-			<option value="registered-users"<?php selected( true, empty( $sub_levels ) && ! is_numeric( $access_level ) && ! empty( $user_role ) && 'All' !== $user_role ); ?>><?php _e( 'Members with a certain role', 'rcp' ); ?></option>
+		<?php
+			$array = array(
+				'unrestricted' => array(
+					'text' => __( 'Everyone', 'rcp' ),
+					'selected' => selected( true, ( empty( $sub_levels ) && empty( $access_level ) && empty( $is_paid ) ) ),
+					),
+				'subscription-level' => array(
+					'text' => __( 'Members of subscription level(s)', 'rcp' ),
+					'selected' => selected( true, ! empty( $sub_levels ) || ! empty( $is_paid ) ),
+					),
+				'access-level' => array(
+					'text' => __( 'Members with an access level', 'rcp' ),
+					'selected' => selected( true, is_numeric( $access_level ) ),
+					),
+				'registered-users' => array(
+					'text' => __( 'Members with a certain role', 'rcp' ),
+					'selected' => selected( true, empty( $sub_levels ) && ! is_numeric( $access_level ) && ! empty( $user_role ) && 'All' !== $user_role ),
+					),
+			);
+			
+			// Provide filterable dropdown options
+			$restrict_dropdown_options = apply_filters( 'rcp_restrict_dropdown_options', $array );
+			foreach( $restrict_dropdown_options as $value => $option ) {
+				
+				// Since the values are filterable, let's make sure their correctly set before trying to use them
+				if( isset( $option['text'], $option['selected'] ) && is_string( $option['text'] ) && is_string( $option['selected'] ) ) {
+					echo '<option value="' . esc_attr( $value ) . '" ' . esc_attr( $option['selected'] ) . '>' . esc_attr( $option['text'] ) . '</option>';
+				}
+				
+			} // end foreach
+		?>
 		</select>
 	</p>
 </div>
